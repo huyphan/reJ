@@ -91,7 +91,7 @@ public class FieldEditor extends JDialog {
     	return this.cancelled;
     }
 
-    public Descriptor getType() {
+    public Descriptor getDescriptorType() {
     	return this.desc;
     }
 
@@ -407,7 +407,7 @@ public class FieldEditor extends JDialog {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 		        	TypeChooseDialog chooser = new TypeChooseDialog(FieldEditor.this);
 		        	chooser.invoke(FieldEditor.this.desc.getReturn(), true);
-		        	JavaType newRet = chooser.getType();
+		        	JavaType newRet = chooser.getJavaType();
 		        	FieldEditor.this.desc.setReturn(newRet);
 		            FieldEditor.this.typeField.setText(newRet.toString());
 				}

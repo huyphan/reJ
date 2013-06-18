@@ -593,14 +593,6 @@ public class ClassFile {
      * Returns a String describing the Java version compability of this class.
      * The value is determined from the major/minor version of the class file
      * using the following specification:
-     * <blockquote>
-	 * The Java virtual machine implementation of Sun’s JDK release 1.0.2 supports
-	 * class file format versions 45.0 through 45.3 inclusive. Sun’s JDK releases
-	 * 1.1.X can support class file formats of versions in the range 45.0 through
-	 * 45.65535 inclusive. For implementations of version 1.k of the Java 2 platform
-	 * can support class file formats of versions in the range 45.0 through 44+k.0
-	 * inclusive.
-     * </blockquote>
      *  
      * @return java version compability <code>String</code> such as "1.5".
      */

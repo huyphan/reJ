@@ -49,14 +49,6 @@ public class ClassVersion {
 		return this.majorVersion + "." + this.minorVersion;
 	}
 	
-	/*
-	 * The Java virtual machine implementation of Sun’s JDK release 1.0.2 supports
-	 * class file format versions 45.0 through 45.3 inclusive. Sun’s JDK releases
-	 * 1.1.X can support class file formats of versions in the range 45.0 through
-	 * 45.65535 inclusive. For implementations of version 1.k of the Java 2 platform
-	 * can support class file formats of versions in the range 45.0 through 44+k.0
-	 * inclusive.
-	 */
 	public String getJavaVersionCompabilityString() {
 		if (this.majorVersion < 45) {
 			return "Invalid";

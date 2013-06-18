@@ -257,7 +257,7 @@ public class TypeChooseDialog extends JDialog {
 		return this.cancelled;
 	}
 
-	public JavaType getType() {
+	public JavaType getJavaType() {
 		Object item = this.typeCombo.getSelectedItem();
 		String name = null;
 		if (item instanceof String ) {
