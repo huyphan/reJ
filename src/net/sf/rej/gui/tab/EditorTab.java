@@ -474,7 +474,7 @@ public class EditorTab extends JPanel implements Tabbable, EventObserver, Transf
 			if (!editor.wasCancelled()) {
 				EditorFacade.getInstance().insertField(
 						EditorTab.this.classDef.getClassFile(),
-						editor.getFieldName(), editor.getType(),
+						editor.getFieldName(), editor.getDescriptorType(),
 						editor.getAccessFlags());
 			}
 		}
@@ -1290,7 +1290,7 @@ public class EditorTab extends JPanel implements Tabbable, EventObserver, Transf
 			if (!this.fieldEditor.wasCancelled()) {
 				AccessFlags af = this.fieldEditor.getAccessFlags();
 				String name = this.fieldEditor.getFieldName();
-				Descriptor desc = this.fieldEditor.getType();
+				Descriptor desc = this.fieldEditor.getDescriptorType();
 
 				EditorFacade.getInstance().modifyField(
 						fdr.getClassFile().getPool(), fdr.getField(), name,

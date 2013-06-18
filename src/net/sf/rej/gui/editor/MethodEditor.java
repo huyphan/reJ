@@ -47,7 +47,7 @@ public class MethodEditor extends JDialog {
         public void actionPerformed(ActionEvent e) {
         	TypeChooseDialog chooser = new TypeChooseDialog(MethodEditor.this);
         	chooser.invoke(MethodEditor.this.desc.getReturn(), true);
-        	JavaType newRet = chooser.getType();
+        	JavaType newRet = chooser.getJavaType();
         	MethodEditor.this.desc.setReturn(newRet);
             MethodEditor.this.returnField.setText(newRet.toString());
         }
