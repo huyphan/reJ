@@ -24,7 +24,7 @@
         description="generate the distribution" >
     <mkdir dir="${dist}/lib"/>
 
-    <jar jarfile="${dist}/lib/MyProject-${DSTAMP}.jar" basedir="${build}">
+    <jar jarfile="${dist}/lib/reJ-${DSTAMP}.jar" basedir="${build}">
       <manifest>
         <attribute name="Main-Class" value="net.sf.rej.gui.MainWindow"/>
       </manifest>
