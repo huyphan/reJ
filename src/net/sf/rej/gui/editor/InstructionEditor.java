@@ -46,6 +46,7 @@ import net.sf.rej.java.ClassFile;
 import net.sf.rej.java.LocalVariable;
 import net.sf.rej.java.attribute.LocalVariableTableAttribute;
 import net.sf.rej.java.constantpool.ConstantPool;
+import net.sf.rej.java.instruction.DecompilationContext;
 import net.sf.rej.java.instruction.Instruction;
 import net.sf.rej.java.instruction.Parameters;
 
@@ -61,6 +62,7 @@ public class InstructionEditor extends JDialog implements LayoutChangeListener {
     private ConstantPool pool = null;
     private ClassFile cf;
     private LocalVariableTableAttribute lvTable = null;
+    private DecompilationContext dc = null;
     private boolean insertMode = false;
 
     private JPanel content = new JPanel();
@@ -122,11 +124,44 @@ public class InstructionEditor extends JDialog implements LayoutChangeListener {
      */
     public void invokeModify() {
     	this.insertMode = false;
+
+        List<Instruction> instructions = this.instructionList.getList();
+
+        List<Instruction> similarInstructions = new ArrayList<Instruction>();
+
+        for (Instruction inst : instructions) {
+            if (this.instruction.isReplaceable(inst, dc)) {
+                similarInstructions.add(inst);
+            }
+        }
+
+        Collections.sort(similarInstructions, new Comparator<Instruction>() {
+            public int compare(Instruction a, Instruction b) {
+                return a.getMnemonic().compareTo(b.getMnemonic());
+            }
+        });
+
+        this.model.removeAllElements();
+        this.model.addElement(this.instruction);
+
+        for (Instruction inst : similarInstructions) {
+            this.model.addElement(inst);
+        }
+
         this.pack();
 		setLocationRelativeTo(getOwner());
+        ItemListener il = new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                instruction = (Instruction) instructionCombo.getSelectedItem();
+                updateEditor();
+            }
+        };
+        this.instructionCombo.addItemListener(il);
+        this.instructionCombo.setSelectedIndex(0);
 		updateEditor();
         ToolTipManager toolTipManager = ToolTipManager.sharedInstance();
         toolTipManager.registerComponent(this.instructionCombo);
+
         super.setVisible(true);
         toolTipManager.unregisterComponent(this.instructionCombo);
     }
@@ -141,7 +176,7 @@ public class InstructionEditor extends JDialog implements LayoutChangeListener {
 			public int compare(Instruction a, Instruction b) {
 				return a.getMnemonic().compareTo(b.getMnemonic());
 			}
-        });
+             });
         this.model.removeAllElements();
         for (Instruction inst : instructions) {
         	this.model.addElement(inst);
@@ -307,10 +342,7 @@ public class InstructionEditor extends JDialog implements LayoutChangeListener {
 		return this.choosers;
 	}
 	
-	public void setLocalVariableTable(LocalVariableTableAttribute lvTable) {
-		this.lvTable = lvTable;
-	}
-	
+
 	public void setPC(int pc) {
 		this.position = pc;
 	}
@@ -326,6 +358,13 @@ public class InstructionEditor extends JDialog implements LayoutChangeListener {
 		this.model.addElement(instruction);
 		this.instructionCombo.setSelectedItem(instruction);
 	}
+
+    public void setDecompilationContext(DecompilationContext dc) {
+        if (dc != null) {
+            this.dc = dc;
+            this.lvTable = dc.getLocalVariableTable();
+        }
+    }
 
 	public void layoutChanged(JComponent c) {
 		pack();

@@ -176,8 +176,8 @@ public class Code {
         return this.context.createNew();
     }
 
-    public void addInstructionAtPC(int pc, Instruction instruction) {
-    	DecompilationContext dc = createDecompilationContext();
+    private int findPositionOfPC(int pc) {
+        DecompilationContext dc = createDecompilationContext();
         int pos = -1;
         for (int i = 0; i < this.code.size(); i++) {
             Instruction otherInst = this.code.get(i);
@@ -190,22 +190,40 @@ public class Code {
         }
 
         if (pc == 0) {
-        	pos = 0;
+            pos = 0;
         }
 
         if (pos == -1) {
-        	if (dc.getPosition() == pc) {
-        		pos = this.code.size();
-        	} else {
-        		throw new RuntimeException("Could not find given pc " + pc);
-        	}
+            if (dc.getPosition() == pc) {
+                pos = this.code.size();
+            } else {
+                throw new RuntimeException("Could not find given pc " + pc);
+            }
         }
 
+        return pos;
+    }
+
+    public Instruction getInstructionAtPC(int pc) {
+        return this.code.get(pc);
+    }
+
+    public void modifyInstructionAtPC(int pc, Instruction instruction) {
+        int pos = findPositionOfPC(pc);
+        modify(pos, instruction);
+    }
+
+    public void addInstructionAtPC(int pc, Instruction instruction) {
+    	int pos = findPositionOfPC(pc);
         add(pos, instruction);
     }
     
     public void appendInstruction(Instruction instruction) {
     	add(this.code.size(), instruction);
+    }
+
+    public void modify(int index, Instruction instruction) {
+        this.code.set(index, instruction);
     }
 
     public void add(int index, Instruction instruction) {

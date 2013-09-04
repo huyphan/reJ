@@ -38,6 +38,8 @@ public class _getstatic extends Instruction {
 
 	private static final int SIZE = 3;
 
+    private static final int STACK_CHANGES = 1;
+
 	private int index;
 
 	public _getstatic() {
@@ -122,5 +124,10 @@ public class _getstatic extends Instruction {
 		}
 		return elements;
 	}
+
+    @Override
+    public int getStackChanges() {
+        return STACK_CHANGES;
+    }
 
 }

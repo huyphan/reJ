@@ -53,17 +53,7 @@ import net.sf.rej.gui.Link;
 import net.sf.rej.gui.MainWindow;
 import net.sf.rej.gui.SystemFacade;
 import net.sf.rej.gui.Undoable;
-import net.sf.rej.gui.action.AddClassRefAction;
-import net.sf.rej.gui.action.AddFieldRefAction;
-import net.sf.rej.gui.action.AddMethodRefAction;
-import net.sf.rej.gui.action.CreateCodeAttributeAction;
-import net.sf.rej.gui.action.GroupAction;
-import net.sf.rej.gui.action.InsertCodeAction;
-import net.sf.rej.gui.action.InsertCodeToNewMethodAction;
-import net.sf.rej.gui.action.InsertFieldAction;
-import net.sf.rej.gui.action.InsertInstructionAction;
-import net.sf.rej.gui.action.InsertMethodAction;
-import net.sf.rej.gui.action.ParamModifyAction;
+import net.sf.rej.gui.action.*;
 import net.sf.rej.gui.debug.DebugControlPanel;
 import net.sf.rej.gui.debug.wrappers.IField;
 import net.sf.rej.gui.debug.wrappers.IMethod;
@@ -1021,26 +1011,34 @@ public class EditorTab extends JPanel implements Tabbable, EventObserver, Transf
 		}
 	}
 	
-	private void modifyInstruction(int pc, Instruction instruction, LocalVariableTableAttribute lvAttr) {
+	private void modifyInstruction(int pc, Instruction instruction, DecompilationContext dc, Code code) {
 		InstructionEditor editor = new InstructionEditor();
 		editor.setPC(pc);
 		editor.setInstruction(instruction);
-		editor.setLocalVariableTable(lvAttr);
+        editor.setDecompilationContext(dc);
 		editor.setClassFile(this.cf);
 		editor.invokeModify();
 		if (!editor.wasCancelled()) {
 			GroupAction group = new GroupAction();
 			List choosers = editor.getChoosers();
+            Instruction newInstruction = editor.getInstruction();
+            try {
+                instruction = instruction.createNewInstance();
+            } catch(Exception e) {
+                SystemFacade.getInstance().handleException(e);
+            }
+            ModifyInstructionAction mia = new ModifyInstructionAction(newInstruction, pc, code);
+            group.add(mia);
 			modifyInstructionParameters(choosers, group, instruction);
             SystemFacade.getInstance().performAction(group);
 		}
 	}
-	
-	private void insertInstruction(MethodDefRow mdr, int pc, LocalVariableTableAttribute lvAttr, Code code) {
+
+	private void insertInstruction(MethodDefRow mdr, int pc, DecompilationContext dc, Code code) {
 		InstructionEditor editor = new InstructionEditor();
 		editor.setClassFile(this.cf);
 		editor.setPC(pc);
-		editor.setLocalVariableTable(lvAttr);
+		editor.setDecompilationContext(dc);
 		editor.invokeInsert();
 		if (!editor.wasCancelled()) {
             GroupAction group = new GroupAction();
@@ -1179,13 +1177,14 @@ public class EditorTab extends JPanel implements Tabbable, EventObserver, Transf
 			MethodDefRow mdr = (MethodDefRow) row;
 			Code code = null;
 			LocalVariableTableAttribute lvAttr = null;
+            DecompilationContext dc = null;
 			if (mdr.getMethod().getAttributes().getCode() != null) {
 				code = mdr.getMethod().getAttributes().getCode().getCode();
 				lvAttr = mdr.getMethod().getAttributes().getCode().getAttributes().getLocalVariableTable(); 
 			}
 			int pc = 0;
 			if (code != null && mdr.isClosing() && mdr.getCodeRows().size() > 0) {
-				DecompilationContext dc = code.createDecompilationContext();
+				dc = code.createDecompilationContext();
 				EditorRow er = mdr.getCodeRows().get(
 						mdr.getCodeRows().size() - 1);
 				if (er instanceof CodeRow) {
@@ -1196,7 +1195,7 @@ public class EditorTab extends JPanel implements Tabbable, EventObserver, Transf
 				}
 			}
 			
-			insertInstruction(mdr, pc, lvAttr, code);
+			insertInstruction(mdr, pc, dc, code);
 		}
 	}
 
@@ -1214,7 +1213,7 @@ public class EditorTab extends JPanel implements Tabbable, EventObserver, Transf
 				dc.setPosition(pos);
 				pos += cr.getInstruction().getSize(dc);
 			}
-			insertInstruction(cr.getEnclosingMethodDef(), pos, dc.getLocalVariableTable(), cr.getEnclosingMethodDef().getMethod().getAttributes().getCode().getCode());
+			insertInstruction(cr.getEnclosingMethodDef(), pos, dc, cr.getEnclosingMethodDef().getMethod().getAttributes().getCode().getCode());
 		}
 
 	}
@@ -1249,7 +1248,7 @@ public class EditorTab extends JPanel implements Tabbable, EventObserver, Transf
 		Object o = this.list.getSelectedValue();
 		if (o instanceof CodeRow) {
 			CodeRow cr = (CodeRow) o;
-			modifyInstruction(cr.getPosition(), cr.getInstruction(), cr.getDecompilationContext().getLocalVariableTable());
+			modifyInstruction(cr.getPosition(), cr.getInstruction(), cr.getDecompilationContext(), cr.getEnclosingMethodDef().getMethod().getAttributes().getCode().getCode());
 			this.list.repaint();
 		} else if (o instanceof MethodDefRow) {
 			MethodDefRow mdr = (MethodDefRow) o;

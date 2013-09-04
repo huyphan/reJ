@@ -38,6 +38,8 @@ public class _getfield extends Instruction {
 
 	private static final int SIZE = 3;
 
+    private static final int STACK_CHANGES = 0;
+
 	private int index = 0;
 
 	public _getfield() {
@@ -124,5 +126,10 @@ public class _getfield extends Instruction {
 		}
 		return elements;
 	}
+
+    @Override
+    public int getStackChanges() {
+        return STACK_CHANGES;
+    }
 
 }

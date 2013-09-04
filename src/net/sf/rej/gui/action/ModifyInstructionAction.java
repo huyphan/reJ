@@ -17,27 +17,44 @@
 package net.sf.rej.gui.action;
 
 import net.sf.rej.gui.Undoable;
+import net.sf.rej.java.Code;
+import net.sf.rej.java.Method;
 import net.sf.rej.java.instruction.Instruction;
 import net.sf.rej.java.instruction.Parameters;
 
 public class ModifyInstructionAction implements Undoable {
 
-    private Instruction instruction;
-    private Parameters newParams;
-    private Parameters oldParams;
+    private Instruction newInstruction;
+    private Instruction oldInstruction;
+    private int pc;
+    private Code code = null;
+    private Method method = null;
 
-    public ModifyInstructionAction(Instruction inst, Parameters params) {
-        this.instruction = inst;
-        this.newParams = params;
-        this.oldParams = inst.getParameters();
+    public ModifyInstructionAction(Instruction instruction, int pc, Code code) {
+        this.newInstruction = instruction;
+        this.pc = pc;
+        this.code = code;
     }
 
-    public void undo() {
-        this.instruction.setParameters(this.oldParams);
+    public ModifyInstructionAction(Instruction instruction, int pc, Method method) {
+        this.newInstruction = instruction;
+        this.pc = pc;
+        this.method = method;
     }
 
     public void execute() {
-        this.instruction.setParameters(this.newParams);
+        if (this.method != null) {
+            this.code = method.getAttributes().getCode().getCode();
+        }
+        this.oldInstruction = this.code.getInstructionAtPC(this.pc);
+        this.code.modifyInstructionAtPC(this.pc, this.newInstruction);
+    }
+
+    public void undo() {
+        if (this.method != null) {
+            this.code = method.getAttributes().getCode().getCode();
+        }
+        this.code.modifyInstructionAtPC(this.pc, this.oldInstruction);
     }
 
 }

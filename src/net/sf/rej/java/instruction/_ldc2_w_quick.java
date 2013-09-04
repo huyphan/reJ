@@ -90,5 +90,4 @@ public class _ldc2_w_quick extends Instruction {
 	public void setParameters(Parameters params) {
 		this.index = params.getInt(0);
 	}
-
 }

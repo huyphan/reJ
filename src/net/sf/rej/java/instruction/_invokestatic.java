@@ -149,4 +149,8 @@ public class _invokestatic extends Instruction {
 		return elements;
 	}
 
+    @Override
+    public int getStackChanges() {
+        throw new RuntimeException("Not supported");
+    }
 }

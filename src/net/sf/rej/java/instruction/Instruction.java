@@ -211,4 +211,37 @@ public abstract class Instruction {
 		return EMPTY_STACK_ELEMENT_LIST;
 	}
 
+    /**
+     * Return the size of changes in stack's top position
+     * before and after the instruction
+     *
+     * @return Size of the changes in stack position
+     */
+    public boolean isReplaceable(Instruction inst, DecompilationContext dc) {
+        if (this.getClass().getSimpleName().equals("_tableswitch") ||
+            this.getClass().getSimpleName().equals("_lookupswitch") ||
+                inst.getClass().getSimpleName().equals("_tableswitch") ||
+                inst.getClass().getSimpleName().equals("_lookupswitch")) {
+            return false;
+        }
+
+        try {
+            if (this.getStackChanges() != inst.getStackChanges()) return false;
+            if (this.getSize() != inst.getSize()) return false;
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
+    /**
+     * Return the size of changes in stack's top position
+     * before and after the instruction
+     *
+     * @return Size of the changes in stack position
+     */
+    public int getStackChanges() {
+        return this.getPushedElements(null).size() - this.getPoppedElements(null).size();
+    }
 }

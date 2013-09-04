@@ -39,6 +39,8 @@ public class _ldc_w extends Instruction {
 
 	private static final int SIZE = 3;
 
+    private static final int STACK_CHANGES = 1;
+
 	private int index = 0;
 
 	public _ldc_w() {
@@ -114,5 +116,10 @@ public class _ldc_w extends Instruction {
 		}
 		return elements;
 	}
+
+    @Override
+    public int getStackChanges() {
+        return STACK_CHANGES;
+    }
 
 }

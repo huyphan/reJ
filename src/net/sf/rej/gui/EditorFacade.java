@@ -37,7 +37,6 @@ import net.sf.rej.gui.action.ModifyClassPropertiesAction;
 import net.sf.rej.gui.action.ModifyDoubleInfoAction;
 import net.sf.rej.gui.action.ModifyFieldAction;
 import net.sf.rej.gui.action.ModifyFloatInfoAction;
-import net.sf.rej.gui.action.ModifyInstructionAction;
 import net.sf.rej.gui.action.ModifyIntegerInfoAction;
 import net.sf.rej.gui.action.ModifyLongInfoAction;
 import net.sf.rej.gui.action.ModifyMethodAction;
@@ -138,12 +137,6 @@ public class EditorFacade implements EventObserver {
 
 	public synchronized static EditorFacade getInstance() {
 		return instance;
-	}
-
-	public void modifyInstruction(Instruction instruction, Parameters params) {
-		ModifyInstructionAction mia = new ModifyInstructionAction(instruction,
-				params);
-		SystemFacade.getInstance().performAction(mia, this.openFile);
 	}
 
 	public void remove(List list) {
