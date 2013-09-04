@@ -1023,13 +1023,13 @@ public class EditorTab extends JPanel implements Tabbable, EventObserver, Transf
 			List choosers = editor.getChoosers();
             Instruction newInstruction = editor.getInstruction();
             try {
-                instruction = instruction.createNewInstance();
+                newInstruction = newInstruction.createNewInstance();
             } catch(Exception e) {
                 SystemFacade.getInstance().handleException(e);
             }
             ModifyInstructionAction mia = new ModifyInstructionAction(newInstruction, pc, code);
             group.add(mia);
-			modifyInstructionParameters(choosers, group, instruction);
+			modifyInstructionParameters(choosers, group, newInstruction);
             SystemFacade.getInstance().performAction(group);
 		}
 	}

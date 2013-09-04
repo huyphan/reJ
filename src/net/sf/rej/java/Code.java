@@ -205,7 +205,19 @@ public class Code {
     }
 
     public Instruction getInstructionAtPC(int pc) {
-        return this.code.get(pc);
+        DecompilationContext dc = createDecompilationContext();
+
+        for (int i = 0; i < this.code.size(); i++) {
+            Instruction otherInst = this.code.get(i);
+            if (dc.getPosition() == pc) {
+                return otherInst;
+            } else if (dc.getPosition() > pc) {
+                break;
+            }
+            dc.incrementPosition(otherInst);
+        }
+
+        throw new RuntimeException("Could not find given pc " + pc);
     }
 
     public void modifyInstructionAtPC(int pc, Instruction instruction) {
