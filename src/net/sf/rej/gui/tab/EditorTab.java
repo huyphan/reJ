@@ -1024,6 +1024,7 @@ public class EditorTab extends JPanel implements Tabbable, EventObserver, Transf
             Instruction newInstruction = editor.getInstruction();
             try {
                 newInstruction = newInstruction.createNewInstance();
+                newInstruction.setParameters(instruction.getParameters());
             } catch(Exception e) {
                 SystemFacade.getInstance().handleException(e);
             }
@@ -1162,6 +1163,7 @@ public class EditorTab extends JPanel implements Tabbable, EventObserver, Transf
                 break;
             case TYPE_LABEL:
                 // no action required
+
                 break;
             case TYPE_SWITCH:
                 // no action required
